@@ -39,9 +39,12 @@ def home():
 
         try:
             if action == 'encrypt' and user_input:
-                output = cipher.encrypt(user_input.encode()).decode()
+                encrypted = cipher.encrypt(user_input.encode())
+                # Format the output for readability
+                output = "\n".join([encrypted[i:i+64].decode() for i in range(0, len(encrypted), 64)])
             elif action == 'decrypt' and user_input:
-                output = cipher.decrypt(user_input.encode()).decode()
+                decrypted = cipher.decrypt(user_input.encode())
+                output = decrypted.decode()
             elif action == 'encrypt' and uploaded_files:
                 file_outputs = []
                 for file in uploaded_files:
@@ -62,7 +65,8 @@ def home():
                         label=None
                     )
                 )
-                output = encrypted.hex()
+                # Format the output for readability
+                output = "\n".join([encrypted.hex()[i:i+64] for i in range(0, len(encrypted.hex()), 64)])
             elif action == 'rsa_decrypt' and user_input:
                 encrypted_bytes = bytes.fromhex(user_input)
                 decrypted = rsa_private_key.decrypt(
@@ -85,6 +89,5 @@ def get_key():
     return encryption_key.decode()
 
 if __name__ == '__main__':
-    # For Render, ensure it binds to 0.0.0.0 and uses port from environment
-    port = int(os.environ.get("PORT", 8080))
-    app.run(host='0.0.0.0', port=port, debug=True)
+    # For local development, set debug mode to True
+    app.run(host='0.0.0.0', port=8080, debug=True)
