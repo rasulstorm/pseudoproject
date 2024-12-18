@@ -21,11 +21,11 @@ def generate_rsa_keys():
 
 app = Flask(__name__)
 
-# AES Setup
+
 encryption_key = generate_aes_key()
 cipher = Fernet(encryption_key)
 
-# RSA Setup
+
 rsa_private_key, rsa_public_key = generate_rsa_keys()
 
 @app.route('/', methods=['GET', 'POST'])
@@ -40,7 +40,7 @@ def home():
         try:
             if action == 'encrypt' and user_input:
                 encrypted = cipher.encrypt(user_input.encode())
-                # Format the output for readability
+                
                 output = "\n".join([encrypted[i:i+64].decode() for i in range(0, len(encrypted), 64)])
             elif action == 'decrypt' and user_input:
                 decrypted = cipher.decrypt(user_input.encode())
@@ -65,7 +65,7 @@ def home():
                         label=None
                     )
                 )
-                # Format the output for readability
+                
                 output = "\n".join([encrypted.hex()[i:i+64] for i in range(0, len(encrypted.hex()), 64)])
             elif action == 'rsa_decrypt' and user_input:
                 encrypted_bytes = bytes.fromhex(user_input)
@@ -88,6 +88,8 @@ def get_key():
     """Endpoint to retrieve the current AES encryption key."""
     return encryption_key.decode()
 
+
+
 if __name__ == '__main__':
-    # For local development, set debug mode to True
-    app.run(host='0.0.0.0', port=8080, debug=True)
+    port = int(os.environ.get("PORT", 8080))  # Use PORT from environment, default to 8080
+    app.run(host='0.0.0.0', port=port)
