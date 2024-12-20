@@ -1,103 +1,88 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Encryption Tool</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
-    <script>
-        function showProgress() {
-            const progressDiv = document.getElementById("progress");
-            progressDiv.style.display = "block";
-        }
-    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diploma Cost Calculator</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f4f4f9;
-            color: #333;
-        }
-
-        h1, h2 {
-            color: #4a4a8a;
-        }
-
-        form {
-            max-width: 500px;
-            margin: 20px auto;
-            background: #fff;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        label {
-            font-weight: bold;
-            display: block;
-            margin-top: 10px;
-        }
-
-        textarea, input, select, button {
-            width: 100%;
-            margin-top: 5px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-
-        button {
-            background-color: #4a4a8a;
-            color: white;
-            cursor: pointer;
-            margin-top: 15px;
-        }
-
-        button:hover {
-            background-color: #3a3a6a;
-        }
-
-        #progress {
-            display: none;
-            margin-top: 20px;
-            font-weight: bold;
-            color: #4a4a8a;
-        }
-
-        .output, .error {
-            margin-top: 20px;
-            padding: 10px;
-            background: #f9f9f9;
-            border-left: 4px solid #4a4a8a;
-            font-size: 14px;
-        }
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f0f4f5; color: #333; }
+        .container { max-width: 600px; margin: auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); }
+        h1 { font-size: 24px; margin-bottom: 20px; }
+        select, button { width: 100%; margin: 10px 0; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 4px; }
+        button { background: #4CAF50; color: white; border: none; cursor: pointer; }
+        button:hover { background: #45a049; }
+        .result { margin-top: 20px; font-size: 20px; font-weight: bold; color: #333; }
+        .contact-button { margin-top: 20px; text-align: center; }
+        .contact-button a { text-decoration: none; padding: 10px 20px; font-size: 16px; background: #007BFF; color: white; border-radius: 4px; display: inline-block; }
+        .contact-button a:hover { background: #0056b3; }
     </style>
 </head>
 <body>
-    <h1>Encryption and Decryption Tool</h1>
-    <form method="POST" enctype="multipart/form-data" onsubmit="showProgress()">
-        <label for="text">Enter Text:</label>
-        <textarea name="text" id="text"></textarea>
-        <label for="file">Or Upload Files (Multiple Allowed):</label>
-        <input type="file" name="file" id="file" multiple>
-        <label for="action">Choose Action:</label>
-        <select name="action" id="action">
-            <option value="encrypt">AES Encrypt</option>
-            <option value="decrypt">AES Decrypt</option>
-            <option value="rsa_encrypt">RSA Encrypt</option>
-            <option value="rsa_decrypt">RSA Decrypt</option>
-        </select>
-        <button type="submit">Submit</button>
-    </form>
-    <div id="progress">Processing... Please wait.</div>
-    <div class="output">
-        <h2>Output:</h2>
-        <pre>{{ output }}</pre>
+    <div class="container">
+        <h1>Diploma Cost Calculator</h1>
+        <h2 style="font-size: 10px;">Цены могут отличаться от реальности в зависимости от темы и сроков, обращайтесь!</h2>
+        <form id="calculator-form">
+            <label for="university">University:</label>
+            <select id="university">
+                <option value="Kazakhstan">Kazakhstan</option>
+                <option value="EU">EU</option>
+                <option value="America">America</option>
+            </select>
+            <label for="format">Format:</label>
+            <select id="format">
+                <option value="LaTeX">LaTeX</option>
+                <option value="Word">Word</option>
+            </select>
+            <label for="language">Language:</label>
+            <select id="language">
+                <option value="Russian">Russian</option>
+                <option value="Kazakh">Kazakh</option>
+                <option value="English">English</option>
+            </select>
+            <label for="volume">Volume:</label>
+            <select id="volume">
+                <option value="50pages">50 pages</option>
+                <option value="30-45pages">30-45 pages</option>
+                <option value="50+pages">50+ pages</option>
+            </select>
+            <label for="code">Code:</label>
+            <select id="code">
+                <option value="Yes">Yes, with project</option>
+                <option value="No">No, I will do project myself</option>
+            </select>
+            <label for="type">Type:</label>
+            <select id="type">
+                <option value="Diploma">Diploma</option>
+                <option value="Dissertation">Dissertation</option>
+            </select>
+            <button type="button" onclick="calculateCost()">Calculate</button>
+        </form>
+        <div class="contact-button">
+            <a href="/reviews">Отзывы</a>
+        </div>
+        <div class="result" id="result"></div>
+        <div class="contact-button">
+            <a href="https://t.me/Itatti" target="_blank">Contact Us on Telegram</a>
+        </div>
     </div>
-    <div class="error">
-        <h2>Error:</h2>
-        <p>{{ error }}</p>
-    </div>
+    <script>
+        async function calculateCost() {
+            const data = {
+                university: document.getElementById('university').value,
+                format: document.getElementById('format').value,
+                language: document.getElementById('language').value,
+                volume: document.getElementById('volume').value,
+                code: document.getElementById('code').value,
+                type: document.getElementById('type').value
+            };
+            const response = await fetch('/calculate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const result = await response.json();
+            document.getElementById('result').textContent = `Total Cost: ${result.total_cost} KZT`;
+        }
+    </script>
 </body>
 </html>

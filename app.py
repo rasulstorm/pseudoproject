@@ -1,95 +1,70 @@
-from flask import Flask, render_template, request, send_file
-from cryptography.fernet import Fernet
-from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.hazmat.primitives.asymmetric import padding
-from cryptography.hazmat.primitives import hashes
-from datetime import datetime
-import os
-
-def generate_aes_key():
-    """Generates a new AES key."""
-    return Fernet.generate_key()
-
-def generate_rsa_keys():
-    """Generates RSA key pair."""
-    private_key = rsa.generate_private_key(
-        public_exponent=65537,
-        key_size=2048
-    )
-    public_key = private_key.public_key()
-    return private_key, public_key
+from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
 
-
-encryption_key = generate_aes_key()
-cipher = Fernet(encryption_key)
-
-
-rsa_private_key, rsa_public_key = generate_rsa_keys()
-
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
 def home():
-    output = ""
-    error = ""
-    if request.method == 'POST':
-        action = request.form.get('action')
-        user_input = request.form.get('text')
-        uploaded_files = request.files.getlist('file')
+    return render_template('index.html')
 
-        try:
-            if action == 'encrypt' and user_input:
-                encrypted = cipher.encrypt(user_input.encode())
-                
-                output = "\n".join([encrypted[i:i+64].decode() for i in range(0, len(encrypted), 64)])
-            elif action == 'decrypt' and user_input:
-                decrypted = cipher.decrypt(user_input.encode())
-                output = decrypted.decode()
-            elif action == 'encrypt' and uploaded_files:
-                file_outputs = []
-                for file in uploaded_files:
-                    file_content = file.read()
-                    encrypted_content = cipher.encrypt(file_content)
-                    metadata = f"Encrypted on {datetime.now()}\n".encode()
-                    filename = f"{file.filename}.enc"
-                    with open(filename, 'wb') as f:
-                        f.write(metadata + encrypted_content)
-                    file_outputs.append(filename)
-                output = f"Encrypted files: {', '.join(file_outputs)}"
-            elif action == 'rsa_encrypt' and user_input:
-                encrypted = rsa_public_key.encrypt(
-                    user_input.encode(),
-                    padding.OAEP(
-                        mgf=padding.MGF1(algorithm=hashes.SHA256()),
-                        algorithm=hashes.SHA256(),
-                        label=None
-                    )
-                )
-                
-                output = "\n".join([encrypted.hex()[i:i+64] for i in range(0, len(encrypted.hex()), 64)])
-            elif action == 'rsa_decrypt' and user_input:
-                encrypted_bytes = bytes.fromhex(user_input)
-                decrypted = rsa_private_key.decrypt(
-                    encrypted_bytes,
-                    padding.OAEP(
-                        mgf=padding.MGF1(algorithm=hashes.SHA256()),
-                        algorithm=hashes.SHA256(),
-                        label=None
-                    )
-                )
-                output = decrypted.decode()
-        except Exception as e:
-            error = f"Error: {str(e)}"
+@app.route('/calculate', methods=['POST'])
+def calculate():
+    data = request.json
 
-    return render_template('index.html', output=output, error=error)
+    # Base cost
+    total_cost = 0
 
-@app.route('/key', methods=['GET'])
-def get_key():
-    """Endpoint to retrieve the current AES encryption key."""
-    return encryption_key.decode()
+    # University selection
+    if data['university'] == 'Kazakhstan':
+        total_cost += 100000
+    elif data['university'] == 'EU':
+        total_cost += 120000
+    elif data['university'] == 'America':
+        total_cost += 150000
 
+    # Format selection
+    if data['format'] == 'LaTeX':
+        total_cost += 50000
+    elif data['format'] == 'Word':
+        total_cost += 0
 
+    # Language selection
+    if data['language'] == 'Russian':
+        total_cost += 10000
+    elif data['language'] == 'Kazakh':
+        total_cost += 30000
+    elif data['language'] == 'English':
+        total_cost += 0
+
+    # Volume selection
+    if data['volume'] == '50pages':
+        total_cost += 0
+    elif data['volume'] == '30-45pages':
+        total_cost += 1000
+    elif data['volume'] == '50+pages':
+        total_cost += 10000
+
+    # Code project
+    if data['code'] == 'Yes':
+        total_cost += 80000
+    elif data['code'] == 'No':
+        total_cost += 0
+
+    # Diploma or Dissertation
+    if data['type'] == 'Dissertation':
+        total_cost += 60000
+
+    return jsonify({'total_cost': total_cost})
+
+@app.route('/contact')
+def contact():
+    return "<h2>Contact Us</h2><p>Reach us on Telegram: <a href='https://t.me/Itatti' target='_blank'>https://t.me/Itatti</a></p>"
+
+@app.route('/reviews')
+def reviews():
+    return render_template('reviews.html')
+
+import os
 
 if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 8080))  # Use PORT from environment, default to 8080
+    port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)

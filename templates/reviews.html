@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отзывы</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f7f7f7; color: #333; }
+        .container { max-width: 900px; margin: 20px auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); }
+        h1 { font-size: 32px; margin-bottom: 20px; text-align: center; }
+        .reviews { display: flex; flex-wrap: wrap; gap: 20px; }
+        .review-card { flex: 1 1 calc(50% - 20px); padding: 20px; background: #f0f4f5; border-radius: 8px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); display: flex; flex-direction: column; align-items: center; }
+        .review-card img { width: 100%; height: auto; border-radius: 8px; margin-bottom: 10px; }
+        .review-card h2 { font-size: 20px; margin: 10px 0; color: #007BFF; text-align: center; }
+        .review-card p { margin: 0; font-size: 16px; line-height: 1.5; text-align: center; }
+        .review-card .author { margin-top: 10px; font-weight: bold; font-size: 14px; color: #555; }
+        footer { text-align: center; margin-top: 30px; font-size: 14px; color: #aaa; }
+        @media (max-width: 600px) {
+            .review-card { flex: 1 1 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Отзывы моих клиентов</h1>
+        <div class="reviews">
+            <!-- Review 1 -->
+            <div class="review-card">
+                <img src="static/reviews/review1.png" alt="Review 1 Screenshot">
+                <h2>Отличная работа!</h2>
+                <p>Проект был выполнен точно в срок, качество работы превзошло все мои ожидания. Очень благодарен за профессионализм!</p>
+                <div class="author">- Коекто</div>
+            </div>
+            <!-- Review 2 -->
+            <div class="review-card">
+                <img src="static/reviews/review2.png" alt="Review 2 Screenshot">
+                <h2>Рекомендую!</h2>
+                <p>Работа была выполнена на высшем уровне. Очень удобный процесс сотрудничества. Спасибо за помощь!</p>
+                <div class="author">- Коеекто</div>
+            </div>
+            <!-- Review 3 -->
+            <div class="review-card">
+                <img src="static/reviews/review3.png" alt="Review 3 Screenshot">
+                <h2>Профессионально и быстро</h2>
+                <p>Мне помогли с дипломным проектом, и это был лучший выбор. Всё сделано качественно и очень оперативно!</p>
+                <div class="author">- Тоже коекто</div>
+            </div>
+            <!-- Review 4 -->
+            <div class="review-card">
+                <img src="static/reviews/review4.png" alt="Review 4 Screenshot">
+                <h2>Супер сервис!</h2>
+                <p>Очень приятное взаимодействие. Работой полностью довольны!</p>
+                <div class="author">- Ребятатоже</div>
+            </div>
+        </div>
+        <footer>
+            Спасибо, что выбираете нас!
+        </footer>
+    </div>
+</body>
+</html>
